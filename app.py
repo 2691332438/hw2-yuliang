@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate onboarding follow-up emails from rough HR notes."""
+"""Generate stakeholder updates from rough data analysis notes."""
 
 from __future__ import annotations
 
@@ -21,39 +21,40 @@ PROMPTS: Dict[str, str] = {
     "v1": textwrap.dedent(
         """
         You are a business writing assistant.
-        Write a professional onboarding follow-up email from the notes below.
-        Return only the email.
+        Write a short stakeholder update from the notes below.
+        Return only the finished update.
         """
     ).strip(),
     "v2": textwrap.dedent(
         """
-        You are a business writing assistant helping HR teams draft onboarding follow-up emails.
+        You are a business writing assistant helping data analysts summarize findings for business stakeholders.
 
         Requirements:
-        - Include a subject line.
-        - Greet the employee by name.
-        - Include the important logistics from the notes.
-        - Keep the tone warm and professional.
+        - Write a concise stakeholder update.
+        - Include the main metrics, trends, and risks from the notes.
+        - Use clear business language for a non-technical audience.
         - Do not invent facts.
+        - End with a simple recommendation or next step if one is provided.
 
-        Return only the finished email.
+        Return only the finished update.
         """
     ).strip(),
     "v3": textwrap.dedent(
         """
-        You are a business writing assistant helping HR teams turn rough notes into polished onboarding emails.
+        You are a business writing assistant helping data analysts turn rough findings into polished stakeholder updates.
 
-        Write a complete onboarding follow-up email from the notes below.
+        Write a complete stakeholder update from the notes below.
 
         Requirements:
         - Start with `Subject: ...`
-        - Use the employee's name in the greeting.
-        - Include every concrete logistical detail that appears in the notes.
+        - Write for a business audience, not a technical audience.
+        - Include the most important metrics, trends, anomalies, risks, and recommendations that appear in the notes.
         - Use plain, professional business English.
-        - Do not guess or add placeholders.
-        - End with a short offer to answer questions.
+        - Do not guess, exaggerate, or add unsupported conclusions.
+        - If the notes mention data quality issues or limitations, include them clearly.
+        - Keep the output concise and readable as an email or written update.
 
-        Return only the finished email with no commentary.
+        Return only the finished update with no commentary.
         """
     ).strip(),
 }
@@ -81,7 +82,7 @@ def load_cases(path: str) -> List[Dict[str, Any]]:
 def build_user_prompt(case: Dict[str, Any]) -> str:
     return (
         f"CASE ID: {case['id']}\n"
-        "TASK: Draft an onboarding follow-up email for a new employee.\n\n"
+        "TASK: Summarize data analysis findings into a stakeholder update.\n\n"
         "NOTES:\n"
         f"{case['notes'].strip()}"
     )
@@ -122,16 +123,26 @@ def call_gemini(api_key: str, model: str, system_prompt: str, user_prompt: str) 
     return "\n".join(text_parts).strip()
 
 
-def save_output(output_dir: Path, case_id: str, prompt_version: str, model: str, response: str) -> None:
+def save_output(
+    output_dir: Path,
+    case: Dict[str, Any],
+    prompt_version: str,
+    model: str,
+    response: str,
+) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
-    path = output_dir / f"{case_id}_{prompt_version}.json"
+    path = output_dir / f"{case['id']}_{prompt_version}.json"
     payload = {
-        "case_id": case_id,
+        "case_id": case["id"],
+        "case_type": case.get("case_type"),
         "prompt_version": prompt_version,
         "model": model,
+        "task": case.get("task"),
+        "good_output_should_do": case.get("good_output_should_do"),
         "response": response,
     }
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    return path
 
 
 def main() -> int:
@@ -155,6 +166,7 @@ def main() -> int:
         if args.dry_run:
             print("=" * 80)
             print(f"CASE: {case['id']}")
+            print(f"CASE TYPE: {case.get('case_type', 'unknown')}")
             print("SYSTEM PROMPT:")
             print(system_prompt)
             print("\nUSER PROMPT:")
@@ -162,8 +174,19 @@ def main() -> int:
             continue
 
         response = call_gemini(api_key, args.model, system_prompt, user_prompt)
-        save_output(Path(args.output_dir), case["id"], args.prompt_version, args.model, response)
-        print(f"Saved output for {case['id']}")
+        output_path = save_output(
+            Path(args.output_dir),
+            case,
+            args.prompt_version,
+            args.model,
+            response,
+        )
+        print("=" * 80)
+        print(f"CASE: {case['id']}")
+        print(f"CASE TYPE: {case.get('case_type', 'unknown')}")
+        print("GENERATED UPDATE:")
+        print(response)
+        print(f"\nSAVED TO: {output_path}")
 
     return 0
 
