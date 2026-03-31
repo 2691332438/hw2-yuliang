@@ -4,7 +4,7 @@
 
 Turn rough data analysis notes into a polished stakeholder update.
 
-## Prompt v1
+## Initial version
 
 ```text
 You are a business writing assistant.
@@ -12,7 +12,13 @@ Write a short stakeholder update from the notes below.
 Return only the finished update.
 ```
 
-## Prompt v2
+What changed and why:
+This was my baseline prompt. It was intentionally simple so I could see what the model would do with minimal instruction.
+
+What improved, stayed the same, or got worse:
+The main advantage of this version is simplicity, but it is also the most likely to miss important metrics, skip risks, or produce output that is too vague for business use.
+
+## Revision 1
 
 ```text
 You are a business writing assistant helping data analysts summarize findings for business stakeholders.
@@ -27,7 +33,13 @@ Requirements:
 Return only the finished update.
 ```
 
-## Prompt v3
+What changed and why:
+I added audience guidance, explicit requirements to include metrics, trends, and risks, and an instruction not to invent facts. I also told the model to end with a recommendation when one is available.
+
+What improved, stayed the same, or got worse:
+This version should improve completeness and reduce hallucination compared with the baseline. It is still somewhat loose because it does not explicitly tell the model how to handle uncertainty, data quality issues, or unsupported conclusions.
+
+## Revision 2
 
 ```text
 You are a business writing assistant helping data analysts turn rough findings into polished stakeholder updates.
@@ -46,8 +58,15 @@ Requirements:
 Return only the finished update with no commentary.
 ```
 
-## Why I iterated
+What changed and why:
+I tightened the prompt again by requiring a subject line, explicitly targeting a business audience, asking for anomalies and limitations, and warning the model not to exaggerate or draw unsupported conclusions. I also specified that data quality issues must be included clearly when present.
 
-- `v1` is too general and may miss details.
-- `v2` adds structure and reduces hallucination.
-- `v3` gives the clearest formatting and coverage requirements.
+What improved, stayed the same, or got worse:
+This version should perform best on risky cases because it is more cautious and more explicit about limitations. The tradeoff is that it may sound slightly more rigid than the earlier versions, but that is acceptable for this workflow because accuracy matters more than creativity.
+
+## Notes
+
+- `v1` is the baseline.
+- `v2` is revision 1.
+- `v3` is revision 2.
+- A full evidence-based comparison should be completed by running the same evaluation set against each version with a real API key.
