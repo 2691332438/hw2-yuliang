@@ -1,41 +1,72 @@
 [
   {
-    "id": "case_01",
-    "employee_name": "Jordan Lee",
-    "notes": "Employee name: Jordan Lee\nRole: Marketing Coordinator\nStart date: Monday, April 14\nArrival time: 9:00 a.m.\nLocation: Chicago office, 4th floor reception\nManager: Priya Shah\nBring: government ID for I-9 verification\nReminder: laptop will be issued on arrival",
+    "id": "case_01_normal_weekly_sales",
+    "case_type": "normal",
+    "task": "Summarize data analysis findings into a stakeholder update",
+    "notes": "Audience: sales manager\nContext: weekly sales update for online store\nKey findings:\n- Total revenue this week was $128,400, up 9% from last week\n- Conversion rate increased from 2.8% to 3.1%\n- Email campaign revenue increased 14%\n- Mobile traffic grew 11% but desktop average order value was still higher\nRecommended action:\n- Keep email promotion running for one more week\nTone: concise, professional, non-technical",
+    "good_output_should_do": "Clearly summarize the main performance improvements, mention the most important metrics, and end with a simple business recommendation in plain language.",
     "expected_checks": [
-      "Jordan Lee",
-      "Monday, April 14",
-      "9:00 a.m.",
-      "Chicago office",
-      "Priya Shah",
-      "government ID"
+      "$128,400",
+      "9%",
+      "2.8%",
+      "3.1%",
+      "14%",
+      "11%"
     ]
   },
   {
-    "id": "case_02",
-    "employee_name": "Maya Patel",
-    "notes": "Employee name: Maya Patel\nRole: Data Analyst\nStart date: Tuesday, May 6\nRemote employee in Eastern Time\nFirst meeting: 10:30 a.m. ET on Zoom\nManager: Carlos Mendoza\nSetup: complete payroll forms and sign into Okta before day one",
+    "id": "case_02_normal_customer_retention",
+    "case_type": "normal",
+    "task": "Summarize data analysis findings into a stakeholder update",
+    "notes": "Audience: product manager\nContext: monthly customer retention summary\nKey findings:\n- 30-day retention for new users was 42%, down from 46% last month\n- The largest drop happened after account signup and before first project creation\n- Users who completed onboarding had much higher retention than users who skipped it\n- Support tickets about account setup increased by 18%\nRecommended action:\n- Review onboarding flow and reduce setup friction\nTone: clear, business-focused, short",
+    "good_output_should_do": "Explain the retention decline in simple terms, highlight where the drop occurs, and connect the findings to a practical product recommendation.",
     "expected_checks": [
-      "Maya Patel",
-      "Tuesday, May 6",
-      "Eastern Time",
-      "10:30 a.m. ET",
-      "Carlos Mendoza",
-      "Okta"
+      "42%",
+      "46%",
+      "account signup",
+      "first project creation",
+      "18%"
     ]
   },
   {
-    "id": "case_03",
-    "employee_name": "Ethan Brooks",
-    "notes": "Employee name: Ethan Brooks\nRole: Customer Success Specialist\nStart date: Wednesday, June 11\nArrival time: 8:30 a.m.\nLocation: Austin office\nParking: use visitor parking in Garage B\nManager: Lena Ortiz\nBring: photo ID and direct deposit information",
+    "id": "case_03_edge_sparse_input",
+    "case_type": "edge",
+    "task": "Summarize data analysis findings into a stakeholder update",
+    "notes": "Audience: operations manager\nContext: quick update on delivery performance\nNotes available:\n- On-time delivery improved slightly this week\n- West region improved\n- East region had delays because of weather\n- Some supplier data is still missing\nTone: brief and cautious",
+    "good_output_should_do": "Produce a short and useful update even though the input is sparse, avoid making up missing numbers, and mention that some supplier data is still incomplete.",
     "expected_checks": [
-      "Ethan Brooks",
-      "Wednesday, June 11",
-      "8:30 a.m.",
-      "Austin office",
-      "Garage B",
-      "Lena Ortiz"
+      "West region",
+      "East region",
+      "weather",
+      "missing"
+    ]
+  },
+  {
+    "id": "case_04_human_review_tracking_issue",
+    "case_type": "likely_to_fail_or_need_review",
+    "task": "Summarize data analysis findings into a stakeholder update",
+    "notes": "Audience: marketing director\nContext: campaign performance summary\nKey findings:\n- Reported paid search conversions increased 63% week over week\n- Revenue attributed to paid search increased only 2%\n- Tracking tags were changed on Tuesday\n- Two dashboards show different conversion totals\n- Analyst note: results may not be reliable yet\nTone: professional and cautious",
+    "good_output_should_do": "Avoid overstating success, explicitly flag the data quality issue, mention the conflicting dashboards, and recommend human review before any business decision is made.",
+    "expected_checks": [
+      "63%",
+      "2%",
+      "tracking",
+      "different conversion totals",
+      "may not be reliable"
+    ]
+  },
+  {
+    "id": "case_05_hallucination_risk_causality",
+    "case_type": "likely_to_fail_or_hallucinate",
+    "task": "Summarize data analysis findings into a stakeholder update",
+    "notes": "Audience: executive team\nContext: summary of churn analysis\nKey findings:\n- Churn was highest among users with low product usage\n- Customers on monthly plans churned more than customers on annual plans\n- Customers who contacted support more than twice also had higher churn\nImportant limitation:\n- This analysis is correlational only and does not prove causation\nInstruction:\n- Do not claim that support contacts caused churn\nTone: executive summary, concise and careful",
+    "good_output_should_do": "Summarize the patterns clearly but avoid causal claims, especially about support contacts. The update should explicitly note that the analysis is correlational and should not overstate the conclusion.",
+    "expected_checks": [
+      "low product usage",
+      "monthly plans",
+      "annual plans",
+      "correlational",
+      "does not prove causation"
     ]
   }
 ]
