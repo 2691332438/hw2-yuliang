@@ -1,0 +1,41 @@
+[
+  {
+    "id": "case_01",
+    "employee_name": "Jordan Lee",
+    "notes": "Employee name: Jordan Lee\nRole: Marketing Coordinator\nStart date: Monday, April 14\nArrival time: 9:00 a.m.\nLocation: Chicago office, 4th floor reception\nManager: Priya Shah\nBring: government ID for I-9 verification\nReminder: laptop will be issued on arrival",
+    "expected_checks": [
+      "Jordan Lee",
+      "Monday, April 14",
+      "9:00 a.m.",
+      "Chicago office",
+      "Priya Shah",
+      "government ID"
+    ]
+  },
+  {
+    "id": "case_02",
+    "employee_name": "Maya Patel",
+    "notes": "Employee name: Maya Patel\nRole: Data Analyst\nStart date: Tuesday, May 6\nRemote employee in Eastern Time\nFirst meeting: 10:30 a.m. ET on Zoom\nManager: Carlos Mendoza\nSetup: complete payroll forms and sign into Okta before day one",
+    "expected_checks": [
+      "Maya Patel",
+      "Tuesday, May 6",
+      "Eastern Time",
+      "10:30 a.m. ET",
+      "Carlos Mendoza",
+      "Okta"
+    ]
+  },
+  {
+    "id": "case_03",
+    "employee_name": "Ethan Brooks",
+    "notes": "Employee name: Ethan Brooks\nRole: Customer Success Specialist\nStart date: Wednesday, June 11\nArrival time: 8:30 a.m.\nLocation: Austin office\nParking: use visitor parking in Garage B\nManager: Lena Ortiz\nBring: photo ID and direct deposit information",
+    "expected_checks": [
+      "Ethan Brooks",
+      "Wednesday, June 11",
+      "8:30 a.m.",
+      "Austin office",
+      "Garage B",
+      "Lena Ortiz"
+    ]
+  }
+]
