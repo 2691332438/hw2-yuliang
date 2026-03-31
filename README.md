@@ -12,7 +12,7 @@ This repository contains my Homework 2 project for the business writing LLM assi
 
 ## Project overview
 
-This project focuses on an HR onboarding workflow. The system takes rough onboarding notes and turns them into a polished follow-up email for a new employee.
+This project focuses on a data analyst workflow. The system takes rough analysis notes, key metrics, trends, and business observations and turns them into a polished stakeholder update.
 
 ## Video Link
 
