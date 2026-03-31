@@ -12,7 +12,7 @@ This repository contains my Homework 2 project for the business writing LLM assi
 
 ## Project overview
 
-This project focuses on a data analyst workflow. The system takes rough analysis notes, key metrics, trends, and business observations and turns them into a polished stakeholder update.
+This project focuses on a business writing workflow: summarizing data analysis findings into stakeholder updates. The system takes rough analysis notes, key metrics, trends, and business observations and turns them into a polished written update for managers or other non-technical stakeholders.
 
 ## Video Link
 

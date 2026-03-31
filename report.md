@@ -2,7 +2,7 @@
 
 ## Workflow
 
-I chose a data analyst workflow because it relies heavily on written communication. In many companies, data analysts need to turn raw findings into short written updates that managers, business teams, or clients can understand quickly.
+I chose a business writing workflow called summarizing data analysis findings into stakeholder updates. This fits the assignment because it is a realistic workplace task that depends heavily on written communication. In many companies, data analysts need to turn raw findings into short written updates that managers, business teams, or clients can understand quickly.
 
 ## User
 
@@ -14,7 +14,7 @@ The system receives rough analysis notes, important metrics, trends, anomalies, 
 
 ## Output
 
-The system should produce a polished business update or summary email for stakeholders in a clear and professional tone.
+The system should produce a polished stakeholder update or summary email in a clear and professional tone.
 
 ## Why this task is valuable
 
