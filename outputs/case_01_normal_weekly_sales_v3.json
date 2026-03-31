@@ -1,0 +1,9 @@
+{
+  "case_id": "case_01_normal_weekly_sales",
+  "case_type": "normal",
+  "prompt_version": "v3",
+  "model": "llama-3.3-70b-versatile",
+  "task": "Summarize data analysis findings into a stakeholder update",
+  "good_output_should_do": "Clearly summarize the main performance improvements, mention the most important metrics, and end with a simple business recommendation in plain language.",
+  "response": "Subject: Weekly Sales Update for Online Store\n\nDear Sales Manager,\n\nThis week's sales update shows a positive trend in our online store's performance. Total revenue reached $128,400, representing a 9% increase from last week. The conversion rate also improved, rising from 2.8% to 3.1%.\n\nNotably, our email campaign revenue saw a 14% increase, indicating the effectiveness of our current promotional strategy. Additionally, mobile traffic grew by 11%, although desktop average order value remains higher.\n\nBased on these findings, we recommend continuing the current email promotion for one more week to capitalize on its success.\n\nPlease let me know if you have any questions or need further insights.\n\nBest regards,\n[Your Name]"
+}

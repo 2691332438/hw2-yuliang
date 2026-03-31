@@ -15,7 +15,11 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 
-DEFAULT_MODEL = "gemini-2.5-flash"
+DEFAULT_PROVIDER = "groq"
+DEFAULT_MODELS = {
+    "gemini": "gemini-2.5-flash",
+    "groq": "llama-3.3-70b-versatile",
+}
 
 PROMPTS: Dict[str, str] = {
     "v1": textwrap.dedent(
@@ -65,7 +69,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--eval-set", default="eval_set.json")
     parser.add_argument("--case-id")
     parser.add_argument("--prompt-version", choices=sorted(PROMPTS.keys()), default="v3")
-    parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--provider", choices=["gemini", "groq"], default=DEFAULT_PROVIDER)
+    parser.add_argument("--model")
     parser.add_argument("--output-dir", default="outputs")
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
@@ -77,6 +82,29 @@ def load_cases(path: str) -> List[Dict[str, Any]]:
     if not isinstance(data, list):
         raise ValueError("Evaluation set must be a list of cases.")
     return data
+
+
+def normalize_api_key(value: str | None, env_name: str) -> str | None:
+    if value is None:
+        return None
+    cleaned = (
+        value.strip()
+        .replace("\u200b", "")
+        .replace("\u200c", "")
+        .replace("\u200d", "")
+        .replace("\ufeff", "")
+        .replace("“", "")
+        .replace("”", "")
+        .replace("‘", "")
+        .replace("’", "")
+    )
+    try:
+        cleaned.encode("ascii")
+    except UnicodeEncodeError as exc:
+        raise RuntimeError(
+            f"{env_name} contains non-ASCII characters. Re-copy the key and export it again."
+        ) from exc
+    return cleaned
 
 
 def build_user_prompt(case: Dict[str, Any]) -> str:
@@ -123,6 +151,45 @@ def call_gemini(api_key: str, model: str, system_prompt: str, user_prompt: str) 
     return "\n".join(text_parts).strip()
 
 
+def call_groq(api_key: str, model: str, system_prompt: str, user_prompt: str) -> str:
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        "temperature": 0.3,
+    }
+    request = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            parsed = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"Groq API error {exc.code}: {detail}") from exc
+    except urllib.error.URLError as exc:
+        raise RuntimeError(f"Network error calling Groq API: {exc}") from exc
+
+    choices = parsed.get("choices") or []
+    if not choices:
+        raise RuntimeError(f"No choices returned: {parsed}")
+    message = choices[0].get("message", {})
+    content = message.get("content")
+    if not content:
+        raise RuntimeError(f"No text returned: {parsed}")
+    return content.strip()
+
+
 def save_output(
     output_dir: Path,
     case: Dict[str, Any],
@@ -155,10 +222,21 @@ def main() -> int:
             return 1
 
     system_prompt = PROMPTS[args.prompt_version]
-    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    model = args.model or DEFAULT_MODELS[args.provider]
+
+    if args.provider == "gemini":
+        api_key = normalize_api_key(
+            os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"),
+            "GEMINI_API_KEY/GOOGLE_API_KEY",
+        )
+    else:
+        api_key = normalize_api_key(os.getenv("GROQ_API_KEY"), "GROQ_API_KEY")
 
     if not args.dry_run and not api_key:
-        print("Missing GEMINI_API_KEY or GOOGLE_API_KEY.", file=sys.stderr)
+        if args.provider == "gemini":
+            print("Missing GEMINI_API_KEY or GOOGLE_API_KEY.", file=sys.stderr)
+        else:
+            print("Missing GROQ_API_KEY.", file=sys.stderr)
         return 1
 
     for case in cases:
@@ -167,23 +245,30 @@ def main() -> int:
             print("=" * 80)
             print(f"CASE: {case['id']}")
             print(f"CASE TYPE: {case.get('case_type', 'unknown')}")
+            print(f"PROVIDER: {args.provider}")
+            print(f"MODEL: {model}")
             print("SYSTEM PROMPT:")
             print(system_prompt)
             print("\nUSER PROMPT:")
             print(user_prompt)
             continue
 
-        response = call_gemini(api_key, args.model, system_prompt, user_prompt)
+        if args.provider == "gemini":
+            response = call_gemini(api_key, model, system_prompt, user_prompt)
+        else:
+            response = call_groq(api_key, model, system_prompt, user_prompt)
         output_path = save_output(
             Path(args.output_dir),
             case,
             args.prompt_version,
-            args.model,
+            model,
             response,
         )
         print("=" * 80)
         print(f"CASE: {case['id']}")
         print(f"CASE TYPE: {case.get('case_type', 'unknown')}")
+        print(f"PROVIDER: {args.provider}")
+        print(f"MODEL: {model}")
         print("GENERATED UPDATE:")
         print(response)
         print(f"\nSAVED TO: {output_path}")

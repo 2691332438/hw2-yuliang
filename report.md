@@ -6,13 +6,13 @@ I chose a business writing workflow called summarizing data analysis findings in
 
 ## Model choice
 
-I chose `gemini-2.5-flash` because it is easy to access through Google AI Studio and fits the assignment's recommendation to use a simple, reproducible API workflow. It is also a practical model for a lightweight prototype because it is fast and designed for general text generation. I did not compare multiple live models in this environment because no API key was available during this setup session, so a fair cross-model comparison would need to be done later with the same evaluation set.
+I used Groq with the model `llama-3.3-70b-versatile`. I chose it because I had working API access and it was easy to call from a simple Python script. For this assignment, that made it practical to build a reproducible command-line prototype that could generate stakeholder updates from the evaluation set. I did not run a full comparison across multiple models, so my conclusions are limited to this one model and prompt design.
 
 ## Baseline vs. final design
 
 My baseline design used a very short prompt that simply asked for a stakeholder update from rough notes. That version was likely to be too vague because it did not explicitly require key metrics, risks, audience awareness, or limitations. In revision 1, I added instructions to include important metrics, trends, and risks, use non-technical language, avoid inventing facts, and include a recommendation when available. In revision 2, I made the system more controlled by requiring a subject line, focusing on anomalies and limitations, and explicitly telling the model not to exaggerate or make unsupported conclusions.
 
-The final design is better aligned with the evaluation set because the evaluation cases include sparse inputs, data quality issues, and correlation-versus-causation risks. The final prompt should perform better on those cases because it is much clearer about caution, limitations, and stakeholder-facing clarity. The main tradeoff is that the final output may be a little more formulaic than the baseline, but that is acceptable for this workflow.
+The final design is better aligned with the evaluation set because the evaluation cases include sparse inputs, data quality issues, and correlation-versus-causation risks. I ran the final prompt on one normal case and the output was strong in several ways: it included the main metrics, used a professional subject line, and ended with a clear recommendation. However, it also showed a real weakness by ending with `[Your Name]`, which is not appropriate for a final stakeholder message unless a human edits it first. The final prompt is therefore better than the baseline for structure and clarity, but it still produces draft-quality output rather than send-ready output.
 
 ## Where the prototype still fails or needs human review
 
@@ -24,4 +24,4 @@ I would recommend this workflow only as a draft-generation tool, not as a fully 
 
 ## Honesty note
 
-The repository includes a reusable evaluation set and three prompt versions, but live evidence from model outputs still needs to be collected with a real API key. That means this report reflects the intended comparison and evaluation design honestly, without inventing results that were not actually run in this environment.
+The repository includes a reusable evaluation set and three prompt versions, and I successfully ran the final prompt on at least one real case using the Groq API. I have not yet run a full side-by-side evaluation of every prompt version on every case, so the comparison in this report is partly based on the prompt design itself and partly based on the sample output I observed. I am keeping that limitation explicit rather than overstating the amount of evidence I collected.
