@@ -17,7 +17,7 @@ This project focuses on a business writing workflow: summarizing data analysis f
 
 ## Video Link
 
-[Homework video](https://youtu.be/u4nWzEO6gqw)
+https://youtu.be/rGnVj-JH1Xs
 
 ## How to run
 
